@@ -49,27 +49,38 @@ class TwilioNotifier:
     self.to_number = to_number
 
   def alert(self, crn, seats):
+    now = time.time() #seconds
+    three_hous_in_secs = 3 * 60 * 60
     if crn not in self.crns_notified:
       data = { 
-          "time_millis" : time.time(),
-          "time_struct" : time.localtime(),
-          "seats" : seats
+          "seats" : seats,
+          "last_notified" : 0 
       };
-      data["last_notified"] = 0
+      print "adding crn ", crn
       self.crns_notified[crn] = data
 
     self.crns_notified[crn]["seats"] = seats
-    if seats > 0 and data["last_notified"] < time.time() + 60*60*1000:
-      self.crns_notified[crn]["time_millis"] = time.time()
-      self.crns_notified[crn]["time_struct"] = time.localtime()
-      time_now = time.strftime("%a, %d %b %Y %H:%M:%S", self.crns_notified[crn]["time_struct"])
+    print "checking now ", crn, " has seats ", seats
+    if seats > 0 and (now - self.crns_notified[crn]["last_notified"] > three_hous_in_secs or self.crns_notified[crn] == 0): 
+      print "alerting ", crn, " with twilio"
+      time_now_sruct = time.localtime()
+      self.crns_notified[crn]["last_notified"] = now
+      time_now = time.strftime("%a, %d %b %Y %H:%M:%S", time_now_sruct)
       message = "Crn {crn} now has {seats} seats at time {time}".format(seats=seats, crn=crn, time=time_now)
       self.client.sms.messages.create(body=message, to=self.to_number, from_=self.from_number)
+    else:
+      print "Did not alert for crn ", crn
+      print self.crns_notified[crn]["last_notified"] - now
 
 notifier = TwilioNotifier(ptwilio.client(), ptwilio.to_number, ptwilio.from_number)
 
-while True:
-  for crn in crns:
-    seats = get_seats_available(crn)
-    notifier.alert(crn=crn, seats=seats)
-  time.sleep(30) #seconds
+def main():
+  while True:
+    for crn in crns:
+      seats = get_seats_available(crn)
+      notifier.alert(crn=crn, seats=seats)
+    time.sleep(60) #seconds
+  return
+
+if '__main__' == __name__:
+   main()
