@@ -26,7 +26,6 @@ def get_seats_available(crn):
   except r.exceptions.SSLError:
     print( 'ssl error')
     quit()
-    pass
   if resp and resp.ok:
     soup = bs.BeautifulSoup(resp.text)
     theTable = soup.findAll('table', attrs={"class" : "datadisplaytable", "summary":"This layout table is used to present the seating numbers."})[0]
@@ -49,28 +48,26 @@ class TwilioNotifier:
     self.to_number = to_number
 
   def alert(self, crn, seats):
-    now = time.time() #seconds
-    three_hous_in_secs = 3 * 60 * 60
+    now = time.time() # seconds
+    wait_time = 60*60 # seconds
     if crn not in self.crns_notified:
       data = { 
           "seats" : seats,
           "last_notified" : 0 
       };
-      print "adding crn ", crn
       self.crns_notified[crn] = data
 
     self.crns_notified[crn]["seats"] = seats
-    print "checking now ", crn, " has seats ", seats
-    if seats > 0 and (now - self.crns_notified[crn]["last_notified"] > three_hous_in_secs or self.crns_notified[crn] == 0): 
+    if seats > 0 and now - self.crns_notified[crn]["last_notified"] > wait_time:
       print "alerting ", crn, " with twilio"
       time_now_sruct = time.localtime()
       self.crns_notified[crn]["last_notified"] = now
       time_now = time.strftime("%a, %d %b %Y %H:%M:%S", time_now_sruct)
       message = "Crn {crn} now has {seats} seats at time {time}".format(seats=seats, crn=crn, time=time_now)
+      print "--->Sending message ", message, "..."
       self.client.sms.messages.create(body=message, to=self.to_number, from_=self.from_number)
     else:
-      print "Did not alert for crn ", crn
-      print self.crns_notified[crn]["last_notified"] - now
+      print "Did not alert for crn ", crn, " last notified it ", now - self.crns_notified[crn]["last_notified"], " seconds ago."
 
 notifier = TwilioNotifier(ptwilio.client(), ptwilio.to_number, ptwilio.from_number)
 
@@ -79,7 +76,7 @@ def main():
     for crn in crns:
       seats = get_seats_available(crn)
       notifier.alert(crn=crn, seats=seats)
-    time.sleep(60) #seconds
+    time.sleep(5) #seconds
   return
 
 if '__main__' == __name__:
