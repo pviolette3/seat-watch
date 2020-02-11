@@ -1,7 +1,7 @@
 BeautifulSoup==3.2.1
 CDApplet==1.0
 CDBashApplet==1.0
-Django==1.4.3
+Django==1.11.28
 Mako==0.7.3
 MarkupSafe==0.15
 MySQL-python==1.2.3
