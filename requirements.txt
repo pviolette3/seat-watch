@@ -64,7 +64,7 @@ twilio==3.6.3
 ubuntuone-storage-protocol==4.2.0
 unittest2==0.5.1
 unity-lens-photos==0.9
-urllib3==1.5
+urllib3==1.26.5
 virtualenv==1.9.1
 wsgiref==0.1.2
 xdiagnose==3.5.1
