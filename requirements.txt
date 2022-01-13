@@ -6,7 +6,7 @@ Mako==0.7.3
 MarkupSafe==0.15
 MySQL-python==1.2.3
 PAM==0.4.2
-Pillow==2.0.0
+Pillow==9.0.0
 Pygments==1.6
 Twisted-Core==12.3.0
 Twisted-Names==12.3.0
