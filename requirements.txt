@@ -14,7 +14,7 @@ Twisted-Web==12.3.0
 adium-theme-ubuntu==0.3.3
 apt-xapian-index==0.45
 argparse==1.2.1
-bottle==0.11.6
+bottle==0.12.20
 ccsm==0.9.9.0
 chardet==2.0.1
 compizconfig-python==0.9.9.0
