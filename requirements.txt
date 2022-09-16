@@ -2,7 +2,7 @@ BeautifulSoup==3.2.1
 CDApplet==1.0
 CDBashApplet==1.0
 Django==1.4.3
-Mako==0.7.3
+Mako==1.2.2
 MarkupSafe==0.15
 MySQL-python==1.2.3
 PAM==0.4.2
